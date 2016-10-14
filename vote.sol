@@ -1,4 +1,4 @@
-// pragma solidity ^0.2.0;
+pragma solidity ^0.4.2;
 
 contract Owned {
 
@@ -15,7 +15,7 @@ contract Owned {
     // definition of a modifier appears.
     modifier onlyOwner {
         if (msg.sender != owner) throw;
-        _
+        _;
     }
 
     function kill() onlyOwner {
@@ -28,33 +28,42 @@ contract Ballot is Owned {
     struct Voter {
         bool voted;
         uint8 vote;
-        address delegate;
     }
     
     struct Proposal {
         uint8 voteCount;
-        uint timestamp;
+        uint32 date; //yyyymmdd
     }
     
     mapping(address => Voter) voters;
     Proposal[] proposals;
 
-    function Ballot() {
+    function Ballot(uint8 numProposals) {
+        proposals.length = numProposals;
     }
     
-    function getProposal(uint8 index) constant returns (uint8 votes, uint timestamp) {
-        Proposal p = proposals[index];
-        votes = p.voteCount;
-        timestamp = p.timestamp;
+    function changeProposal(uint index, uint32 date) onlyOwner {
+        if (index >= proposals.length || proposals[index].voteCount > 0) {
+            throw;//up   
+        }
+        else {
+            proposals[index].date = date;
+        }
     }
-
+    
     /// Give a single vote to proposal $(proposal).
     function vote(uint8 proposal) {
-        Voter sender = voters[msg.sender];
-        if (sender.voted || proposal >= proposals.length) throw;
+        Voter voter = voters[msg.sender];
+        if (voter.voted || proposal >= proposals.length) throw;
         
-        sender.voted = true;
-        sender.vote = proposal;
+        voter.voted = true;
+        voter.vote = proposal;
+    }
+    
+    function getProposal(uint8 index) constant returns (uint8 votes, uint32 date) {
+        Proposal p = proposals[index];
+        votes = p.voteCount;
+        date = p.date;
     }
 
     function getWinningProposalIndex() constant returns (uint8 winningProposal) {
