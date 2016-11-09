@@ -38,7 +38,7 @@ contract BaseBallot is Owned {
     mapping(address => Voter) voters;
     Proposal[] proposals;
 
-    function Ballot(uint8 numProposals) {
+    function BaseBallot(uint8 numProposals) {
         proposals.length = numProposals;
     }
     
