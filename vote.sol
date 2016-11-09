@@ -24,7 +24,7 @@ contract Owned {
 }
 
 
-contract Ballot is Owned {
+contract BaseBallot is Owned {
     struct Voter {
         bool voted;
         uint8 vote;
@@ -75,3 +75,5 @@ contract Ballot is Owned {
             }
     }
 }
+
+contract Ballot is BaseBallot {}
